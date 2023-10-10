@@ -12,7 +12,7 @@ describe('CommanderService', () => {
     service = module.get<CommanderService>(CommanderService);
   });
 
-  it('should be defined', () => {
+  it('should be definedsss', () => {
     expect(service).toBeDefined();
   });
 });
