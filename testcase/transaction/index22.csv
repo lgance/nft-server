@@ -1,0 +1,16 @@
+## 여기는 하고싶은말 아무거나 쓰는 곳입니다. 테스트 케이스는 RUN 부터 시작합니다.
+##
+##
+isNCPServices 가 존재한다면 CheckIP와 TargetPort 등은 무시 하도록 합니다
+
+sendServer  recvServer  targetPort  protocol  checkIP isNCPServices
+[RUN]
+10.1.1.1	10.2.2.2	3500	HTTP_TCP	10.3.3.3	Empty
+10.1.1.1	10.2.2.2	3500	TCP	Empty	Empty
+10.1.1.1	10.2.2.2	3500	UDP	
+10.1.1.1	10.2.2.2	3500	HTTP_TCP	ObjectStorage
+10.1.1.1	10.2.2.2	3500	ICMP	SystemSecurityChecker
+10.1.1.1	10.2.2.2	3500	HTTP_TCP	10.3.3.3	Empty
+10.1.1.1	10.2.2.2	3500	UDP	10.3.3.3	Empty
+10.1.1.1	10.2.2.2	3500	TCP	10.3.3.3	Empty
+10.1.1.1	10.2.2.2	3500	HTTP	10.3.3.3	Empty
