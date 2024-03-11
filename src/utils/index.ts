@@ -145,11 +145,14 @@ export class TransactionServerUtils {
   }):Promise<any>{
     return new Promise(async(resolve,reject)=>{
       try {
+        // serverURL 
+        // http://localhost:3500/sender?
 
         let generatedCallURL = testCases.reduce((prev:any,curr:any,index:number)=>{
-            let testURL = `${curr.send_server}:${curr.agent_port}/`
-            +`?dstIP=${curr.recv_server}`
-            +`&targetPort=${curr.target_port}`
+            let testURL = `?srcIP=${curr.src_server}`
+            +`&srcPort=${curr.src_port}/`
+            +`&dstIP=${curr.dst_server}`
+            +`&dstPort=${curr.dst_port}`
             +`&protocol=${curr.protocol}`
             +`&is_check_tcp_state=${curr.is_check_tcp_state}`
             +`&is_negative=${curr.is_negative}`

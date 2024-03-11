@@ -4,10 +4,10 @@
  "testCases":[
   {
     "testcase_name":"TCP 기본 테스트 ",
-    "send_server":"10.1.1.1",
-    "recv_server":"10.2.2.2",
-    "agent_port":"3500",
-    "target_port":"3500",
+    "src_server":"10.1.1.1",
+    "dst_server":"10.2.2.2",
+    "src_port":"3500",
+    "dst_port":"3500",
     "protocol":"HTTP_TCP",
     "is_check_tcp_state":"",
     "is_negative":false,

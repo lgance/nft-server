@@ -7,10 +7,10 @@ import { CommanderModule } from './commander/commander.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { StartModule } from './start/start.module';
-
+import { SenderModule } from './sender/sender.module';
 
 @Module({
-  imports: [CommanderModule, StartModule,   
+  imports: [CommanderModule, StartModule, SenderModule,  
     ServeStaticModule.forRoot({
       rootPath:join(__dirname,'..','server_static'),
       serveRoot:"/"
