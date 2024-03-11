@@ -5,6 +5,12 @@ import * as fs from 'fs'
 import axios from "axios";
 import { TransactionTestCaseDTO } from "src/interface/testcase.status";
 
+
+
+interface testCaseInfo {
+  testCases:any[];
+  testCaseInfoJSON:{}
+}
 export class TransactionServerUtils {
 
   private static instance:TransactionServerUtils;
@@ -53,28 +59,14 @@ export class TransactionServerUtils {
     })
   }
   
-  public async getTestCase_read_stream(type:string):Promise<any[]>{
-      // find TestCase Root index CSV File
-      let currentTestCaseRootPath = path.resolve(this.testCaseRootPath,type+'/index.csv');
-
-
-
-      let allTestCase:any;
-
-
-      return allTestCase;
-  }
-  public async getTestCase(type:string):Promise<any[]>{
+  public async getTestCase(type:string):Promise<testCaseInfo>{
 
 
     await this._LOG('getTestCase');
 
     // find TestCase Root index CSV File
     let currentTestCaseRootPath = path.resolve(this.testCaseRootPath,type+'/index.json');
-
-    // use fs/promises readFile 
-    // Test Case Root Index File Open ( Raw Data );
-    const tc:any = await readFile(currentTestCaseRootPath);
+    const testCaseJSON:any = await import(currentTestCaseRootPath);
     // sequence Object Key is 
     /**
      * This is Transaction Test Case Type 
@@ -87,45 +79,10 @@ export class TransactionServerUtils {
      * isNCPServices - check is NCP Services ( Priority High ) 
      * ObjectStorage , SystemSecurityChecker ,  NTK .. etc
      */
-
-    return [
-      {
-        "testcase_name":"TCP 기본 테스트 ",
-        "send_server":"10.1.1.1",
-        "recv_server":"10.2.2.2",
-        "agent_port":"3500",
-        "target_port":"3500",
-        "protocol":"HTTP_TCP",
-        "is_check_tcp_state":"",
-        "is_negative":false,
-        "check_ip":"",
-        "is_ncp_services":"",
-      },
-      {
-        "testcase_name":"TCP Socket 테스트 ",
-        "send_server":"10.1.1.1",
-        "recv_server":"10.2.2.2",
-        "agent_port":"3500",
-        "target_port":"3500",
-        "protocol":"TCP",
-        "is_check_tcp_state":"",
-        "is_negative":false,
-        "check_ip":"",
-        "is_ncp_services":"",
-      },
-      {
-        "testcase_name":"UDP 기본 테스트 ",
-        "send_server":"10.1.1.1",
-        "recv_server":"10.2.2.2",
-        "agent_port":"3500",
-        "target_port":"3500",
-        "protocol":"UDP",
-        "is_check_tcp_state":"",
-        "is_negative":false,
-        "check_ip":"",
-        "is_ncp_services":"",
-      },
-    ];
+    return {
+      testCases :testCaseJSON.testCases,
+      testCaseInfoJSON:testCaseJSON
+    };
   }
 
 /* 
@@ -149,8 +106,7 @@ export class TransactionServerUtils {
 
         // generated Transaction Test get call strings
 
-        console.warn(testCases);
-       
+        
         // Child Process 를 생성한다.
 
         // 해당 testCases 를 보낸다

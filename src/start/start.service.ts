@@ -16,7 +16,8 @@ export class StartService {
 
     // get CSV File and TestCase Check 
     let utils = TransactionServerUtils.getInstance
-    let testCases = await utils.getTestCase(automation_type);
+    let tcJSON = await utils.getTestCase(automation_type);
+    let testCases = tcJSON.testCases;
 
     await utils.startTestCaseUsingChildProcess({
       automation_type,
