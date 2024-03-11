@@ -4,16 +4,21 @@ import { access , readFile , readdir } from 'fs/promises';
 import * as fs from 'fs'
 import axios from "axios";
 import { TransactionTestCaseDTO } from "src/interface/testcase.status";
-
+import { fork ,ChildProcess } from 'node:child_process';
 
 
 interface testCaseInfo {
   testCases:any[];
   testCaseInfoJSON:{}
 }
+
 export class TransactionServerUtils {
 
   private static instance:TransactionServerUtils;
+  private testCount= 10 ;
+  private testEndTime='';
+  private testLock = false;
+  private testWorker :ChildProcess;
 
   // process.cwd() is project root absolute Path 
   private testCaseRootPath = path.resolve(process.cwd(),'testcase');
@@ -39,32 +44,69 @@ export class TransactionServerUtils {
   }):Promise<any>{
     return new Promise(async(resolve,reject)=>{
       try {
-        await this._LOG(` This is Test Start ${automation_type}`)
-        switch(automation_type.toLowerCase()){
-          case 'transaction':
-            await this.startTransactionTest({testCases});
-              
-          break;
-
-          default:
-
-          break;
+        let testStartObject:any = {
+          start_message:"empty",
+          start_result:"block"
         }
-        resolve(true);
+        console.warn(this.testLock);
+        if(!!this.testLock){
+            let testLockMessage = `This Server Test is working EndTime ${this.testEndTime}`;
+           await this._LOG(testLockMessage,"INFO")
+           testStartObject.start_message=testLockMessage;
+           testStartObject.start_result="block";
 
+           resolve(testStartObject);
+        }
+        else{
+          await this._LOG(`This is Test Start ${automation_type}`)
+
+          switch(automation_type.toLowerCase()){
+            case 'transaction':
+              testStartObject = await this.startTransactionTest({testCases});
+            break;
+  
+            default:
+              testStartObject.start_message="";
+              testStartObject.start_result="fail";
+            break;
+          }
+          this.testWorker= fork(path.resolve(__dirname,'child_process_utils'));
+          this.testWorker.on('message',(message:any)=>{
+            if(message.type==='complete'){
+              console.warn(message);
+              testStartObject.processResult = message.result,
+              resolve(testStartObject);
+            }
+            else if(message.type==='error'){
+              testStartObject.processError = message.error;
+              resolve(testStartObject);
+            }
+
+            else if(message.type==="transaction_complete"){
+              this.setTestLock(false);
+              testStartObject.processResult="테스트 종료 되었습니다."
+              resolve(testStartObject);
+            }
+          });
+  
+          this.testWorker.send({
+            // automation_type,
+            type: 'startTransactionTest',
+            testCases:testStartObject.start_testcase_gen
+          });
+  
+          this.testLock=true;
+        }
+
+      
       } catch (error) {
-        console.warn(error);
-        reject(reject);
+        reject(error);
       }
     })
   }
-  
   public async getTestCase(type:string):Promise<testCaseInfo>{
-
-
     await this._LOG('getTestCase');
-
-    // find TestCase Root index CSV File
+    // get test case according to type 
     let currentTestCaseRootPath = path.resolve(this.testCaseRootPath,type+'/index.json');
     const testCaseJSON:any = await import(currentTestCaseRootPath);
     // sequence Object Key is 
@@ -104,15 +146,6 @@ export class TransactionServerUtils {
     return new Promise(async(resolve,reject)=>{
       try {
 
-        // generated Transaction Test get call strings
-
-        
-        // Child Process 를 생성한다.
-
-        // 해당 testCases 를 보낸다
-
-        // 순서대로 Promise Call 을 비동기로 쏩니다. 
-        // sendSererIP:PORT/?dstIP={dstIP}&targetPort={targetPort}
         let generatedCallURL = testCases.reduce((prev:any,curr:any,index:number)=>{
             let testURL = `${curr.send_server}:${curr.agent_port}/`
             +`?dstIP=${curr.recv_server}`
@@ -124,19 +157,17 @@ export class TransactionServerUtils {
             +`&is_ncp_services=${curr.is_ncp_services}`
             +`&testcase_name=${curr.testcase_name}`
             +`&testcase_message=${curr.testcase_message}`
-
             prev.push(testURL);
-
             return prev;
         },[]);
 
-        await this._LOG('genrated CALL Complte',"INFO")
-
-        console.warn(generatedCallURL);
-
-
-        console.warn('Complete Transaction Test');
-        resolve(true);
+        
+        resolve({
+          start_message:"transaction Test Start",
+          start_result:"pass",
+          start_testcase_origin:testCases,
+          start_testcase_gen:generatedCallURL
+        });
       } catch (error) {
         console.warn('start Transaction  Error');
         reject(error);
@@ -144,6 +175,11 @@ export class TransactionServerUtils {
     })
   }
 
+  private setTestLock(testLock:boolean){
+    console.warn('testLock 셋');
+    console.warn(this.testLock);
+    this.testLock = testLock;
+  }
 
 
   public _LOG(message:string,type:string ='NORMAL'){

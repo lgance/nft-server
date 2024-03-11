@@ -3,6 +3,7 @@ import { Injectable } from "@nestjs/common";
 
 import { StartDto , StartResDto} from "./dto/start.dto";
 import { TransactionServerUtils } from "src/utils";
+import * as dayjs from 'dayjs'
 
 @Injectable()
 export class StartService {
@@ -19,15 +20,16 @@ export class StartService {
     let tcJSON = await utils.getTestCase(automation_type);
     let testCases = tcJSON.testCases;
 
-    await utils.startTestCaseUsingChildProcess({
+    let startTestCaseObject = await utils.startTestCaseUsingChildProcess({
       automation_type,
       testCases
     });
 
     return {
-      result:"pass",
+      startStatus:startTestCaseObject,
       automation_type,
-      start_time:new Date() 
+      start_time:dayjs().format(`YYYY-MM-DD-HH:mm:ss [SSS]_SSS A`),
+      
     }
   }
 
