@@ -1,8 +1,8 @@
 import axios from 'axios';
 // 메인 프로세스에서 메시지 수신
 process.on('message', (message: { type: string; testCases: any[] }) => {
-  console.warn('여기는 Child Process 메인 프로세스 입니다. ')
-  console.warn(message);
+  // console.warn(`[💧CHILD PROCESS]`)
+  // console.warn(message);
   if (message.type === 'startTransactionTest') {
     externalProcessRunTransaction(message);
   }
@@ -24,15 +24,22 @@ async function externalProcessRunTransaction({ testCases }) {
   let isCondition = 2 ;
 
   // http://localhost:3500/start?automation_type=transaction
-  let serverURL = 'http://localhost:3500/sender'
+  let serverURL = 'http://localhost:3500/commander'
   while(isCondition > count ){
     testCases.reduce(async(prev,curr,item,index)=>{
       try {
         let nextItem = await prev;
         
         let requestURL = serverURL.concat(curr);
+        console.warn(`[💧CHILD PROCESS][SERVER REQUEST]`)
         console.warn(requestURL);
-        await axios.get(requestURL);
+        let response = await axios.get(requestURL);
+        console.warn(`[💧CHILD PROCESS][SERVER RESPONSE]`)
+
+        let { agentStatus } = response.data;
+
+        // console.warn(response.data);
+        // console.warn(agentStatus);
 
         return nextItem;
       } catch (error) {
@@ -47,6 +54,3 @@ async function externalProcessRunTransaction({ testCases }) {
   // 결과를 메인 프로세스로 보냅니다.
   process.send({ type: 'transaction_complete', result: 'Transaction Test Complete' });
 }
-
-
-console.warn('test');

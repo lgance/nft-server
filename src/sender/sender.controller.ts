@@ -15,7 +15,6 @@ export class SenderController {
 
   @Get()
   sendTraffic(@Query() sendDto:SenderDto){
-    console.warn(sendDto);
     return this.senderService.sendTraffic(sendDto);
   }
 

@@ -48,17 +48,26 @@ export class TransactionServerUtils {
           start_message:"empty",
           start_result:"block"
         }
-        console.warn(this.testLock);
+        
         if(!!this.testLock){
             let testLockMessage = `This Server Test is working EndTime ${this.testEndTime}`;
-           await this._LOG(testLockMessage,"INFO")
+           await this._LOG({message:testLockMessage,
+            type:"INFO",
+            name:"SET_TEST_LOCK"
+           })
            testStartObject.start_message=testLockMessage;
            testStartObject.start_result="block";
 
            resolve(testStartObject);
         }
         else{
-          await this._LOG(`This is Test Start ${automation_type}`)
+          await this._LOG(
+            {
+              message:`This is Test Start ${automation_type}`,
+              type:"INFO",
+              name:"NEW_TEST_START"
+            }
+            )
 
           switch(automation_type.toLowerCase()){
             case 'transaction':
@@ -73,7 +82,8 @@ export class TransactionServerUtils {
           this.testWorker= fork(path.resolve(__dirname,'child_process_utils'));
           this.testWorker.on('message',(message:any)=>{
             if(message.type==='complete'){
-              console.warn(message);
+              // console.warn(`[🔥 SERVER PROCESS] ON Complete Message`)
+              // console.warn(message);
               testStartObject.processResult = message.result,
               resolve(testStartObject);
             }
@@ -105,7 +115,7 @@ export class TransactionServerUtils {
     })
   }
   public async getTestCase(type:string):Promise<testCaseInfo>{
-    await this._LOG('getTestCase');
+    await this._LOG({message:'getTestCase',type:"INFO",name:"GET_TEST_CASE_FN"});
     // get test case according to type 
     let currentTestCaseRootPath = path.resolve(this.testCaseRootPath,type+'/index.json');
     const testCaseJSON:any = await import(currentTestCaseRootPath);
@@ -179,13 +189,23 @@ export class TransactionServerUtils {
   }
 
   private setTestLock(testLock:boolean){
-    console.warn('testLock 셋');
+    console.warn(`[🔥 SERVER PROCESS][SET_TEST_LOCK_FN][BEFORE]`)
     console.warn(this.testLock);
     this.testLock = testLock;
+    console.warn(`[🔥 SERVER PROCESS][SET_TEST_LOCK_FN][AFTER]`)
+    console.warn(this.testLock);
   }
 
 
-  public _LOG(message:string,type:string ='NORMAL'){
+  public _LOG({
+    message,
+    type="NORMAL",
+    name,
+  }:{
+    message:string,
+    type:string, 
+    name:string
+  }){
     return new Promise(async(resolve,reject)=>{
       try {
         const Reset = "\x1b[0m"
@@ -219,7 +239,8 @@ export class TransactionServerUtils {
         let currentConsoleTheme = FgMagenta;
         let current_time = dayjs().format('YYYY-MM-DD HH:mm:ss');
 
-        let logString:string = `[${current_time}][${type}] ${message}`
+        let logString:string = `[🔥 SERVER PROCESS][${name}][${current_time}][${type}] ${message}`
+        
 
         if(type==='NORMAL'){
           console.warn(currentConsoleTheme,logString,Reset);

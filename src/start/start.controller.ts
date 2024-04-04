@@ -11,7 +11,6 @@ export class StartController{
 
   @Get()
   testStart(@Query() startDto:StartDto){
-    console.warn('start controller Test');
     return this.startService.testStart(startDto);
   }
 

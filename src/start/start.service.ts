@@ -25,8 +25,8 @@ export class StartService {
       testCases
     });
 
-    console.warn('테스트 ');
-    console.warn(startTestCaseObject);
+    // console.warn(`[🔥 SERVER PROCESS]`)
+    // console.warn(startTestCaseObject);
 
     return {
       startStatus:startTestCaseObject,

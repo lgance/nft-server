@@ -5,7 +5,9 @@ import { SenderDto,SenderResDto } from './dto/sender.dto';
 export class SenderService {
 
     sendTraffic(sendDto:SenderDto):SenderResDto{
-        
+        console.warn(`[🔥 SERVER PROCESS][SEND_TRAFFIC]`)
+        console.warn(sendDto);
+
         return{
             mainResult:"pass",
             agentStatus:{
