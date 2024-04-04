@@ -25,6 +25,9 @@ export class StartService {
       testCases
     });
 
+    console.warn('테스트 ');
+    console.warn(startTestCaseObject);
+
     return {
       startStatus:startTestCaseObject,
       automation_type,

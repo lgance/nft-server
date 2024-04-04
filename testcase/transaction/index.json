@@ -4,7 +4,7 @@
  "testCases":[
   {
     "testcase_name":"TCP 기본 테스트 ",
-    "src_server":"10.1.1.1",
+    "src_server":"10.1.12.48",
     "dst_server":"10.2.2.2",
     "src_port":"3500",
     "dst_port":"3500",
