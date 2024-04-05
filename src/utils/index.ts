@@ -104,8 +104,7 @@ export class TransactionServerUtils {
             type: 'startTransactionTest',
             testCases:testStartObject.start_testcase_gen
           });
-  
-          this.testLock=true;
+          this.setTestLock(true);
         }
 
       
@@ -160,7 +159,7 @@ export class TransactionServerUtils {
 
         let generatedCallURL = testCases.reduce((prev:any,curr:any,index:number)=>{
             let testURL = `?srcIP=${curr.src_server}`
-            +`&srcPort=${curr.src_port}/`
+            +`&srcPort=${curr.src_port}`
             +`&dstIP=${curr.dst_server}`
             +`&dstPort=${curr.dst_port}`
             +`&protocol=${curr.protocol}`
@@ -174,13 +173,14 @@ export class TransactionServerUtils {
             return prev;
         },[]);
 
-        
         resolve({
           start_message:"transaction Test Start",
           start_result:"pass",
           start_testcase_origin:testCases,
           start_testcase_gen:generatedCallURL
         });
+
+
       } catch (error) {
         console.warn('start Transaction  Error');
         reject(error);

@@ -14,6 +14,8 @@ export class CommanderDto{
   @IsString()
   readonly srcIP:string;
 
+  // 왜 srcPort만 이짓을 해줘야하는지 아직 모르겠음;; dstPort는 상관없는데;
+  @Transform(value => String(value.value))
   @IsString()
   readonly srcPort:string;
 
