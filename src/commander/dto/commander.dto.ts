@@ -44,11 +44,11 @@ export class CommanderDto{
    * B는 srcIP:Port로 SYN_RECV 상태여야 성공 
    */
   @IsOptional()
-  @IsBoolean()
+  @IsString()
   @Transform((value)=>{
-    return value.value =='true' ? true : false;
+    return value.value ==='true' ? 'Y' : (value.value==='Y' ? 'Y' : 'N');
   })
-  readonly is_negative :boolean;
+  readonly is_negative :string;
   /**
    * 해당 IP로 들어오는지 체크 요청을 같이 합니다.
    * assertionIP = 1234일 경우

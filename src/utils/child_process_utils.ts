@@ -2,7 +2,7 @@ import axios from 'axios';
 // 메인 프로세스에서 메시지 수신
 process.on('message', (message: { type: string; testCases: any[] }) => {
   // console.warn(`[💧CHILD PROCESS]`)
-  console.warn(message);
+  // console.warn(message);
   if (message.type === 'startTransactionTest') {
     externalProcessRunTransaction(message);
   }
@@ -31,17 +31,17 @@ async function externalProcessRunTransaction({ testCases }) {
         let nextItem = await prev;
         
         let requestURL = serverURL.concat(curr);
+        
         console.warn(`[💧CHILD PROCESS][SERVER REQUEST]`)
-        // console.warn(requestURL);
+
         let response = await axios.get(requestURL);
+
         console.warn(`[💧CHILD PROCESS][SERVER RESPONSE]`)
-
-        let { agentStatus } = response.data;
-
-        // console.warn('[RESPONSE LINE]-------------------------------------------\r\n');
-        // console.warn(response.data);
-        // console.warn(agentStatus);
-        // console.warn('[LOG LINE]-------------------------------------------\r\n');
+        
+        console.warn('[RESPONSE LINE]---\r\n');
+        console.warn(requestURL);
+        console.warn(response.data);
+        console.warn('[LOG LINE]---\r\n');
 
         return nextItem;
       } catch (error) {

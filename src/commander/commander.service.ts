@@ -25,28 +25,25 @@ export class CommanderService {
 
         let utils = TransactionServerUtils.getInstance
 
-          let requestURL = `http://${srcIP}:${srcPort}`+
-          '/sender?'+
-          `dstIP=${dstIP}&dstPort=${dstPort}&`+
-          `protocol=${protocol}&`+
-          `is_check_tcp_state=${is_check_tcp_state}&`+
-          `is_negative=${is_negative}&`+
-          `check_ip=${check_ip}&`+
-          `is_ncp_services=${is_ncp_services}`+
-          `testcase_name=${testcase_name}`
-
+          let requestURL = `http://${srcIP}:${srcPort}/sender`
+          +`?dstIP=${dstIP}`
+          +`&dstPort=${dstPort}`
+          +`&protocol=${protocol}`
+          +`&is_check_tcp_state=${is_check_tcp_state}`
+          +`&is_negative=${is_negative}`
+          +`&check_ip=${check_ip}`
+          +`&is_ncp_services=${is_ncp_services}`
+          +`&testcase_name=${testcase_name}`
 
           utils._LOG({
             message:'COMMANDER REQUEST ',
             type:"NORMAL",
             name:"COMMANDTRAFFIC"
           });
-
-          console.warn(requestURL);
           let response = await axios.get(requestURL);
+          return response.data;
 
 
-          return true;
         } catch (error) {
             console.warn(error.response.data);
             return false;

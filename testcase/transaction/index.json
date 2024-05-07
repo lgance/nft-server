@@ -3,14 +3,14 @@
  "message":"메시지를 적습니다.",
  "testCases":[
   {
-    "testcase_name":"TCP 기본 테스트 ",
+    "testcase_name":"tcp_basic_test",
     "src_server":"223.130.135.55",
     "dst_server":"110.165.19.236",
     "src_port":"3800",
     "dst_port":"3800",
     "protocol":"HTTP_TCP",
     "is_check_tcp_state":"",
-    "is_negative":"Y",
+    "is_negative":"N",
     "check_ip":"",
     "is_ncp_services":"",
     "testcase_message":""
